@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NodeJs Full Cycle</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+    }
+    h1 {
+        font-size: 24px;
+        margin-top: 20px;
+    }
+    #generate-btn {
+        padding: 15px 30px;
+        font-size: 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-top: 20px;
+    }
+    #generate-btn:hover {
+        background-color: #0056b3;
+    }
+    table {
+        width: 80%;
+        border-collapse: collapse;
+        margin: 20px auto;
+        margin-top: 20px;
+        border-left: 2px solid #007bff;
+        border-right: 2px solid #007bff;
+    }
+    th, td {
+        padding: 10px;
+        border-bottom: 2px solid #007bff;
+    }
+    th {
+        background-color: #007bff;
+        color: #fff;
+    }
+</style>
+</head>
+<body>
+    <h1>Full Cycle Rocks!</h1>
+    <button id="generate-btn">Generate Name</button>
+    <table id="names-table">
+        <thead>
+            <tr>
+                <th>Names</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Linhas da tabela serão preenchidas dinamicamente pelo JavaScript -->
+        </tbody>
+    </table>
+    
+    <script>
+        function addNameToTable(name) {
+            var table = document.getElementById("names-table").getElementsByTagName('tbody')[0];
+            var row = table.insertRow();
+            var cell = row.insertCell();
+            cell.appendChild(document.createTextNode(name));
+        }
+
+        function populateNamesTable() {
+            fetch('http://localhost:8080/api/v1/users')
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(user => {
+                        addNameToTable(user.name);
+                    });
+                })
+                .catch(error => {
+                    console.error('Erro ao obter os nomes:', error);
+                });
+        }
+
+        function generateName() {
+            fetch('http://localhost:8080/api/v1/users', {method: 'POST'})
+                .then(response => response.text())
+                .then(text => {
+                    addNameToTable(text);
+                    alert('Nome gerado: ' + text);
+                });
+        }
+        document.getElementById("generate-btn").addEventListener("click", generateName);
+        window.onload = populateNamesTable;
+    </script>
+</body>
+</html>
